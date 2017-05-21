@@ -21,7 +21,7 @@
             [refactor-nrepl "2.3.0-SNAPSHOT"]]
   :npm {:dependencies [[source-map-support "0.4.6"]]
         :write-package-json true}
-  :source-paths ["tags" "src" "target/classes"]
+  :source-paths ["src" "target/classes"]
   :clean-targets ["target"]
   :target-path "target"
   :profiles

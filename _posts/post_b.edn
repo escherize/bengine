@@ -1,0 +1,13 @@
+[:article
+ [:h1 "Hello I'm post b."]
+ [:p "Look at your template system then back at me."]
+ [:p "Now let's make something using a normal clojure function!"]
+ [:hr]
+ [:pre
+  "(->> (range 1 10)
+      (map (fn [n] [:li \"hi from line #\" n]))
+      (into [:ol]))"]
+ [:hr]
+ (->> (range 1 10)
+      (map (fn [n] [:li "hi from line #" n]))
+      (into [:ol]))]

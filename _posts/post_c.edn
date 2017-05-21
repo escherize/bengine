@@ -1,0 +1,5 @@
+[:article
+ (my/title "Hello World")
+ [:p "I'm post C and I just used a tag function called my/title,"]
+ [:p "located in "
+  [:code {:style "color: red;"} "_tags/tags.cljs"]]]
