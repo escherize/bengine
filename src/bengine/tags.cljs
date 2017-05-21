@@ -11,8 +11,7 @@
    (into [:ul]
          (map #(li-link % %2) hrefs titles))])
 
-
-(defn template [& forms]
+(defn post-template [& forms]
   [:html
    [:head
     [:meta {:charset "utf-8"}]

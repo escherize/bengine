@@ -58,7 +58,7 @@
         (-> (get-file-name file-path)
             (str/replace "edn" "html"))]
     (fs/spit (str out-dir "/" output-file-name)
-             (html (my/template content)))))
+             (html (my/post-template content)))))
 
 (defn- write-posts [processed-posts output-dir]
   (doseq [post-info processed-posts]
