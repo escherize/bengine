@@ -69,7 +69,7 @@
                     processed-posts)
         titles (mapv (comp str/capitalize get-file-name :file-path)
                      processed-posts)
-        out-str (html (my/home-template hrefs titles))
+        out-str (html (my/index-template hrefs titles))
         out-file (str output-dir "/index.html")]
     (js/console.log "writing -> " out-file)
     (fs/spit out-file out-str)))

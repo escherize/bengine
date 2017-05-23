@@ -4,7 +4,7 @@
 (defn- li-link [href title]
   [:li [:a {:href (str/replace href ".edn" ".html")} title]])
 
-(defn home-template [hrefs titles]
+(defn index-template [hrefs titles]
   [:article
    [:h1 "Blog title"]
    [:p "Welcome or some-such."]
