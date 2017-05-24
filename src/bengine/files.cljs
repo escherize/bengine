@@ -16,29 +16,26 @@
 (defn- eval-str [s]
   (eval (empty-state)
         (read-string
-         (str "(do (enable-console-print!)" s ")"))
-        {:eval       js-eval
+          (str "(do (enable-console-print!)" s ")"))
+        {:eval js-eval
          :source-map true
-         :context    :expr}
+         :context :expr}
         (fn [result]
-          #_(js/console.log "got result: " (pr-str result))
+          (println "got result: " (pr-str result))
           (:value result ::no-value))))
 
 (defn- posts [path]
   {:pre [(fs/exists? path)]}
   (let [edn-file? #(str/ends-with? % ".edn")
         normalize-path #(str path "/" %)]
-    (->> path
-         fs/read-dir-sync
-         (filter edn-file?)
-         (map normalize-path)
-         vec)))
+    (->> path fs/read-dir-sync (filter edn-file?) (map normalize-path) vec)))
 
 (defn- process-post [file-path]
-  (js/console.log "reading -> " file-path)
+  (println "")
+  (println "reading -> " file-path)
   (let [process-hiccup (comp eval-str
                              ;; ;; evil stuff ------v  -------v
-                              #(str/replace % "my/" "bengine.tags/")
+                             #(str/replace % "my/" "bengine.tags/")
                              fs/slurp)]
     {:content (process-hiccup file-path)
      :file-path file-path
@@ -53,11 +50,9 @@
   (last (last (re-seq #"/(.[^/|*].+)" file-path))))
 
 (defn- write-post [out-dir {:keys [content file-path last-modified]}]
-  (js/console.log "writing -> " file-path)
-  (let [output-file-name
-        (-> (get-file-name file-path)
-            (str/replace "edn" "html"))]
-    (fs/spit (str out-dir "/" output-file-name)
+  (println "writing -> " file-path)
+  (let [out-html-file (-> file-path get-file-name (str/replace "edn" "html"))]
+    (fs/spit (str out-dir "/" out-html-file)
              (html (my/post-template content)))))
 
 (defn- write-posts [processed-posts output-dir]
@@ -65,19 +60,18 @@
     (write-post output-dir post-info)))
 
 (defn- write-index [processed-posts output-dir]
-  (let [hrefs (mapv (comp get-file-name :file-path)
-                    processed-posts)
-        titles (mapv (comp str/capitalize get-file-name :file-path)
-                     processed-posts)
-        out-str (html (my/home-template hrefs titles))
+  (let [post-infos (map (fn [pposts] {:href (comp get-file-name :file-path)
+                                      :title (comp str/capitalize get-file-name :file-path)})
+                        processed-posts)
+        out-str (-> post-infos my/home-template html)
         out-file (str output-dir "/index.html")]
-    (js/console.log "writing -> " out-file)
+    (println "writing -> " out-file)
     (fs/spit out-file out-str)))
 
 (defn compile-blog [posts-dir output-dir]
-  (js/console.log "posts-dir" posts-dir)
+  (println "posts-dir" posts-dir)
   (let [processed-posts (process-posts posts-dir)]
-    (js/console.log "writing posts...")
+    (println "writing posts...")
     (write-posts processed-posts output-dir)
-    (js/console.log "writing index...")
+    (println "writing index...")
     (write-index processed-posts output-dir)))

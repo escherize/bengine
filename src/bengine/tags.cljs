@@ -1,24 +1,29 @@
 (ns bengine.tags
   (:require [clojure.string :as str]))
 
-(defn- li-link [href title]
-  [:li [:a {:href (str/replace href ".edn" ".html")} title]])
-
-(defn home-template [hrefs titles]
-  [:article
-   [:h1 "Blog title"]
-   [:p "Welcome or some-such."]
-   (into [:ul]
-         (map #(li-link % %2) hrefs titles))])
-
-(defn post-template [& forms]
+(defn html-page [form]
   [:html
    [:head
     [:meta {:charset "utf-8"}]
     [:meta {:name "viewport"
             :content "width=device-width, initial-scale=1"}]]
-   (into [:body] forms)])
+   [:body form]])
+
+;; post infos looks like this:
+;; [{:href "lemon.html"
+;;  :title "How I learned to do a thing."}]
+(defn home-template [post-infos]
+  [:article
+   [:h1 "My Blog"]
+   [:p "Welcome or some-such."]
+   [:ul
+    (for [{:keys [link title] :as info} post-infos]
+      [:li [:a {:href link} title]])]])
+
+(defn post-template [& forms]
+  (into [:article] forms))
 
 (defn title [s] [:h1 s])
 
-(defn p [& xs] [:p (str/join \newline xs)])
+(defn p [& xs]
+  [:p (str/join \newline xs)])
