@@ -35,7 +35,7 @@ Posts can contain tags (a few are included). You are free to create any tag func
 
 In `_tags/tags.cljs`:
 ``` clojure
-(defn heading [s] [:h1 heading])
+(defn heading [s] [:h1 s])
 ```
 
 In one of your posts in `_posts/any_post_name.edn`:
