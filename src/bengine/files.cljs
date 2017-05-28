@@ -82,7 +82,6 @@
                                :prev prev
                                :up "index.html"}))))
 
-
 (defn- write-posts [processed-posts out-dir in-dir]
   (doseq [post-info processed-posts]
     (write-post out-dir in-dir post-info)))

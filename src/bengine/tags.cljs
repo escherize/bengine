@@ -9,7 +9,9 @@
    [:head
     [:meta {:charset "utf-8"}]
     [:meta {:name "viewport"
-            :content "width=device-width, initial-scale=1"}]]
+            :content "width=device-width, initial-scale=1"}]
+    [:link {:rel "stylesheet"
+            :href "https://cdnjs.cloudflare.com/ajax/libs/tufte-css/1.1/tufte.min.css"}]]
    [:body forms]])
 
 ;; wrapper for the index page (home page)
@@ -34,10 +36,11 @@
     [:span "Posted on: " creation-time]
     content
     (when prev
-      [:a {:href prev} "<-- "])
-    [:a {:href up} " back "]
+      [:a {:href prev} "<--"])
+    [:span {:style "margin: auto 10px;"}
+     [:a {:href up} "back"]]
     (when next
-      [:a {:href next} " -->"])))
+      [:a {:href next} "-->"])))
 
 ;; user's own tags:
 (defn title [s] [:h1 s])
