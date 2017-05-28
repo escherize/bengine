@@ -1,5 +1,4 @@
 (ns bengine.files
-  (:require-macros [hiccups.core :as hiccups :refer [html]])
   (:require [macchiato.fs :as fs]
             [cljs.nodejs :as node]
             [hiccups.runtime :as hiccupsrt]
@@ -9,9 +8,11 @@
             [clojure.string :as str]
             [bengine.config :as c]
             [bengine.tags :as my] ;; <-- load this for evalling templates
-            ))
+            )
+  (:require-macros [hiccups.core :as hiccups]))
 
-(def ^:private fs (node/require "fs"))
+(defn- get-file-name [file-path]
+  (last (last (re-seq #"/(.[^/|*].+)" file-path))))
 
 (defn- eval-str [s]
   (eval (empty-state)
@@ -30,48 +31,74 @@
         normalize-path #(str path "/" %)]
     (->> path fs/read-dir-sync (filter edn-file?) (map normalize-path) vec)))
 
+(defn ->title [file-path]
+  (as-> file-path $
+    (get-file-name $)
+    (str/replace $ ".edn" "")
+    (str/replace $ "_" " ")
+    (str/split $ " ")
+    (map str/capitalize $)
+    (str/join " " $)))
+
 (defn- process-post [file-path]
-  (println "")
-  (println "reading -> " file-path)
+  (println "processing: " file-path)
+  (println "reading --> " file-path)
   (let [process-hiccup (comp eval-str
                              ;; ;; evil stuff ------v  -------v
                              #(str/replace % "my/" "bengine.tags/")
                              fs/slurp)]
     {:content (process-hiccup file-path)
      :file-path file-path
-     :last-modified (:birthtime (fs/stat file-path))}))
+     :here (-> file-path
+               get-file-name
+               (str/replace "edn" "html"))
+     :title (->title file-path)
+     :creation-time (:birthtime (fs/stat file-path))}))
+
+(defn add-next-prev [posts]
+  (vec
+    (map-indexed
+      (fn [idx p]
+        (let [next-file (:here (get posts (inc idx)))
+              prev-file (:here (get posts (dec idx)))]
+          (assoc p :next next-file :prev prev-file)))
+      posts)))
 
 (defn- process-posts [path]
   (->> (posts path)
        (mapv process-post)
-       (sort-by :file-path)))
+       (sort-by :file-path)
+       vec
+       add-next-prev))
 
-(defn- get-file-name [file-path]
-  (last (last (re-seq #"/(.[^/|*].+)" file-path))))
+(defn- write-post [out-dir in-dir {:keys [content file-path here title creation-time prev next]}]
+  (println "writing post -> " file-path)
+  (fs/spit (str out-dir "/" here)
+           (hiccups/html
+             (my/post content {:title title
+                               :creation-time creation-time
+                               :here here
+                               :next next
+                               :prev prev
+                               :up "index.html"}))))
 
-(defn- write-post [out-dir {:keys [content file-path last-modified]}]
-  (println "writing -> " file-path)
-  (let [out-html-file (-> file-path get-file-name (str/replace "edn" "html"))]
-    (fs/spit (str out-dir "/" out-html-file)
-             (html (my/post-template content)))))
 
-(defn- write-posts [processed-posts output-dir]
+(defn- write-posts [processed-posts out-dir in-dir]
   (doseq [post-info processed-posts]
-    (write-post output-dir post-info)))
+    (write-post out-dir in-dir post-info)))
 
-(defn- write-index [processed-posts output-dir]
-  (let [post-infos (map (fn [pposts] {:href (comp get-file-name :file-path)
-                                      :title (comp str/capitalize get-file-name :file-path)})
-                        processed-posts)
-        out-str (-> post-infos my/home-template html)
-        out-file (str output-dir "/index.html")]
-    (println "writing -> " out-file)
+(defn- write-index [processed-posts out-dir]
+  (let [out-str (-> processed-posts my/index hiccups/html)
+        out-file (str out-dir "/index.html")]
+    (println "writing index -> " out-file)
     (fs/spit out-file out-str)))
 
-(defn compile-blog [posts-dir output-dir]
-  (println "posts-dir" posts-dir)
-  (let [processed-posts (process-posts posts-dir)]
+(defn compile-blog [in-dir out-dir]
+  (println "in-dir: " in-dir)
+  (let [processed-posts (process-posts in-dir)]
     (println "writing posts...")
-    (write-posts processed-posts output-dir)
+    (write-posts processed-posts out-dir in-dir)
     (println "writing index...")
-    (write-index processed-posts output-dir)))
+    (write-index processed-posts out-dir)))
+
+(bengine.core/main)

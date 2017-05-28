@@ -16,3 +16,4 @@ pom.xml.asc
 /.env
 /node_modules
 /blog
+/public

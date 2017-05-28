@@ -5,8 +5,8 @@
 (defstate env :start
   (merge
    {:posts-dir "_posts"
-    :output-dir "public"}
+    :out-dir "public"}
    (config/env)))
 
 (defn posts-dir [] (:posts-dir @env))
-(defn output-dir [] (:output-dir @env))
+(defn out-dir [] (:out-dir @env))

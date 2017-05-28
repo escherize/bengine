@@ -11,7 +11,8 @@
                  [org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.542"]
                  [macchiato/fs "0.0.7"]
-                 [org.clojure/tools.reader "0.10.0"]]
+                 [org.clojure/tools.reader "0.10.0"]
+                 [org.clojure/test.check "0.9.0"]]
   :jvm-opts ^:replace ["-Xmx1g" "-server"]
   :plugins [[lein-doo "0.1.7"]
             [macchiato/lein-npm "0.6.3"]
@@ -26,20 +27,20 @@
   :target-path "target"
   :profiles
   {:dev
-   {:npm {:package {:main "target/out/bengine.js"
+   {:npm {:package {:main    "target/out/bengine.js"
                     :scripts {:start "node target/out/bengine.js"}}}
     :cljsbuild
     {:builds {:dev
               {:source-paths ["env/dev" "src"]
                :figwheel     true
-               :compiler     {:main          bengine.app
-                              :output-to     "target/out/bengine.js"
-                              :output-dir    "target/out"
-                              :target        :nodejs
-                              :optimizations :none
-                              :pretty-print  true
-                              :source-map    true
-                              :source-map-timestamp false}}}}
+               :compiler {:main                 bengine.app
+                          :output-to            "target/out/bengine.js"
+                          :out-dir              "target/out"
+                          :target               :nodejs
+                          :optimizations        :none
+                          :pretty-print         true
+                          :source-map           true
+                          :source-map-timestamp false}}}}
     :figwheel
     {:http-server-root "public"
      :nrepl-port 7000
