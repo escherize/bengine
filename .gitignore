@@ -15,5 +15,4 @@ pom.xml.asc
 *.log
 /.env
 /node_modules
-/blog
-/public
+/public/*
