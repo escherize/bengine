@@ -100,4 +100,4 @@
     (println "writing index...")
     (write-index processed-posts out-dir)))
 
-(bengine.core/main)
+;; (bengine.core/main)
