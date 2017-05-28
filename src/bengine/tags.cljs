@@ -3,6 +3,9 @@
 
 (def moment (js/require "moment"))
 
+(defn ->date [js-date]
+  (.format (moment creation-time) "LL"))
+
 ;; common wrapper for all pages
 (defn html [& forms]
   [:html
@@ -27,13 +30,13 @@
              post-infos]
          [:li
           [:a {:href here} title]
-          [:span " - (posted on: " (.format (moment creation-time) "LL") ")"]]))]))
+          [:span " - (posted on: " (->date creation-time) ")"]]))]))
 
 ;; wrapper common to all posts
 (defn post [content {:keys [title creation-time here next prev up]}]
   (html
     [:h1 [:a {:href here} title]]
-    [:span "Posted on: " creation-time]
+    [:span "Posted on: " (->date creation-time)]
     content
     (when prev
       [:a {:href prev} "<--"])

@@ -1,15 +1,22 @@
 ## Welcome to bengine!
 
+[Demo](http://escherize.com/bengine/public)
+
 The data oriented static site generator.
 
 ## Why bengine?
 
 This could be the most _simple_ blog framework you can find.
 
-What do static site generators (or blog engines) do? They take some meaty source material (usually text) in, and spit out a carefully crafted website.
+Static site generators (take some meaty source material (usually text) in, and spit out a carefully crafted website.
 
-With bengine, you will write powerful and obvious transformations on your text / thoughts / diagrams to turn it into a fantastic blog.
+With bengine, you will write easy, simple, and powerful tags for your thoughts to turn them into a killer blog.
 
+No waiting around with bengine -- It's running on clojurescript on node, so re-renders are _fast_.
+
+### Origin story
+
+I really wanted to use Matthew Butterick's amazing [pollen](http://docs.racket-lang.org/pollen/) to build a blog for myself. But I found nesting radcket's x-expressions too unweidly, and didn't want to learn how to make it work.  Based on the advice of a friend, I decided to see if I could clone pollen's key ideas into a clojurescript-on-node based site generator.
 
 ### Philosophy
 
@@ -52,7 +59,7 @@ Compile your blog, and see:
 
 In your tags:
 ```clojure
-(rules [& rs]
+(defn rules [& rs]
        (into [:ol] (map #(vector :li %) rs)))
 ```
 
@@ -76,10 +83,6 @@ Then, in your post:
 There are 2 templates that you can use to customize how *posts* and your *index* page look. They're in `_tags/tags.cljs` and called `post-template` and `index-template` respectively, and can be edited like any other tag.
 
     Protip: don't remove those functions.
-
-### Origin story
-
-I really wanted to use Matthew Butterick's amazing [pollen](http://docs.racket-lang.org/pollen/) to build a blog for myself. But I found nesting x-expressions too difficult, and didn't want to learn how to make it "just work".  Based on the advice of a friend, I decided to see how closely I could clone pollen's key ideas into a clojurescript-on-node based static site generator.
 
 ### Prequisites
 
