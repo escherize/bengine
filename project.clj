@@ -35,7 +35,7 @@
                :figwheel     true
                :compiler {:main                 bengine.app
                           :output-to            "target/out/bengine.js"
-                          :out-dir              "target/out"
+                          :output-dir           "target/out"
                           :target               :nodejs
                           :optimizations        :none
                           :pretty-print         true
